@@ -22,3 +22,6 @@ p `bind` f = \inp -> concat [f v inp' | (v, inp') <- p inp]
 
 sat :: (Char -> Bool) -> Parser Char
 sat p = item `bind` \x -> if p x then result x else zero
+
+plus :: Parser a -> Parser a -> Parser a
+p `plus` q = \inp -> (p inp ++ q inp)
