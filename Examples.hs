@@ -9,6 +9,11 @@ getThreeBind = item `bind` \x1 ->
                item `bind` \x3 ->
                result (x1, x2, x3)
 
+getThreeMonad = item >>= \x1 ->
+                item >>= \x2 ->
+                item >>= \x3 ->
+                result (x1, x2, x3)
+
 char :: Char -> Parser Char
 char x = sat (\y -> x == y)
 

@@ -2,11 +2,11 @@ module Parser where
 
 import Control.Monad
 
-data Parser a = Parser {appl :: (String -> [(a, String)])}
+data Parser a = Parser {apply :: (String -> [(a, String)])}
 
---instance Monad (Parser a) where
---    (>>=) p f = bind
---    return = zero
+instance Monad Parser where
+    (>>=) = bind
+    return = result
 
 result :: a -> Parser a
 result v = Parser (\inp -> [(v, inp)])
@@ -24,7 +24,7 @@ Parser p `pseq` Parser q = Parser (\inp -> [((v, w), inp'') | (v, inp')  <- p in
                                                             , (w, inp'') <- q inp'])
 
 bind :: Parser a -> (a -> Parser b) -> Parser b
-Parser p `bind` f = Parser (\inp -> concat [appl (f v) inp' | (v, inp') <- p inp])
+Parser p `bind` f = Parser (\inp -> concat [apply (f v) inp' | (v, inp') <- p inp])
 
 sat :: (Char -> Bool) -> Parser Char
 sat p = item `bind` \x -> if p x then result x else zero
