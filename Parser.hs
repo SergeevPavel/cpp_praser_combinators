@@ -1,27 +1,33 @@
 module Parser where
 
-type Parser a = String -> [(a, String)]
+import Control.Monad
+
+data Parser a = Parser {appl :: (String -> [(a, String)])}
+
+--instance Monad (Parser a) where
+--    (>>=) p f = bind
+--    return = zero
 
 result :: a -> Parser a
-result v = \inp -> [(v, inp)]
+result v = Parser (\inp -> [(v, inp)])
 
 zero :: Parser a
-zero = \inp -> []
+zero = Parser (\inp -> [])
 
 item :: Parser Char
-item = \inp -> case inp of
-                    []     -> []
-                    (x:xs) -> [(x, xs)]
+item = Parser (\inp -> case inp of
+                            []     -> []
+                            (x:xs) -> [(x, xs)])
 
 pseq :: Parser a -> Parser b -> Parser (a, b)
-p `pseq` q = \inp -> [((v, w), inp'') | (v, inp')  <- p inp
-                                      , (w, inp'') <- q inp']
+Parser p `pseq` Parser q = Parser (\inp -> [((v, w), inp'') | (v, inp')  <- p inp
+                                                            , (w, inp'') <- q inp'])
 
 bind :: Parser a -> (a -> Parser b) -> Parser b
-p `bind` f = \inp -> concat [f v inp' | (v, inp') <- p inp]
+Parser p `bind` f = Parser (\inp -> concat [appl (f v) inp' | (v, inp') <- p inp])
 
 sat :: (Char -> Bool) -> Parser Char
 sat p = item `bind` \x -> if p x then result x else zero
 
 plus :: Parser a -> Parser a -> Parser a
-p `plus` q = \inp -> (p inp ++ q inp)
+Parser p `plus`  Parser q = Parser (\inp -> (p inp ++ q inp))
