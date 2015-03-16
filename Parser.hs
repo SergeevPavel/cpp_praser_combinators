@@ -8,6 +8,10 @@ instance Monad Parser where
     (>>=) = bind
     return = result
 
+instance MonadPlus Parser where
+    mzero = zero
+    mplus = plus
+
 result :: a -> Parser a
 result v = Parser (\inp -> [(v, inp)])
 
