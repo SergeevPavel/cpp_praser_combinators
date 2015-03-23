@@ -79,3 +79,18 @@ int = do
 
 ints :: Parser [Int]
 ints = brackets (char '[') (int `sepby` char ',') (char ']')
+
+expr :: Parser Int
+expr = term `chainl1` addop
+
+term :: Parser Int
+term = factor `chainr1` expop
+
+factor :: Parser Int
+factor = nat `plus` (brackets (char '(') expr (char ')'))
+
+addop :: Parser (Int -> Int -> Int)
+addop = ops [(char '+', (+)), (char '-', (-))]
+
+expop :: Parser (Int -> Int -> Int)
+expop = ops [(char '^', (^))]

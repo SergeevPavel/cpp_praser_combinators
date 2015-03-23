@@ -87,4 +87,7 @@ p `chainr1` op = do
                             return (f, y))
             return $ foldr (\(f, y) x -> f x y) x fys
 
-
+ops :: [(Parser a, b -> b -> b)] -> Parser (b -> b -> b)
+ops xs = foldr1 plus [(do 
+                        _ <- p
+                        return op)  | (p, op) <- xs]
