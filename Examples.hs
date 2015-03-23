@@ -1,5 +1,7 @@
 module Examples where
 
+import Data.Char
+
 import Parser
 
 getThreeSeq = item `pseq` item `pseq` item
@@ -35,6 +37,9 @@ upper = sat (\x -> 'A' <= x && x <= 'Z')
 letter :: Parser Char
 letter = lower `plus` upper
 
+alphanum :: Parser Char
+alphanum = letter `plus` digit
+
 word :: Parser String
 word = (do
     x  <- letter
@@ -47,3 +52,27 @@ string (x:xs) = do
     char x
     string xs
     return (x:xs)
+
+ident :: Parser String
+ident = do
+    x  <- lower
+    xs <- (many alphanum)
+    return (x:xs)
+
+nat :: Parser Int
+nat = do
+    xs <- many1 digit
+    return $ eval xs
+    where
+        eval xs = foldl1 op [ord x - ord '0' | x <- xs]
+        m `op` n = 10 * m + n
+
+int :: Parser Int
+int = do
+    f <- op
+    n <- nat
+    return (f n)
+    where
+        op = (do
+            char '-'
+            return negate) `plus` return id
