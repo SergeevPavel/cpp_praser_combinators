@@ -44,7 +44,27 @@ many p = (do
     xs <- many p
     return (x:xs)) `plus` return []
 
+many1 :: Parser a -> Parser [a]
 many1 p = (do
     x  <- p
     xs <- many p
     return (x:xs))
+
+sepby1 :: Parser a -> Parser b -> Parser [a]
+p `sepby1` sep = do
+    x <- p
+    xs <- many (do 
+                 _ <- sep
+                 y <- p
+                 return y)
+    return (x:xs)
+
+sepby :: Parser a -> Parser b -> Parser [a]
+p `sepby` sep = (p `sepby1` sep) `plus` (result [])
+
+brackets :: Parser a -> Parser b -> Parser c -> Parser b
+brackets open p close = do
+                        open
+                        x <- p
+                        close
+                        return x

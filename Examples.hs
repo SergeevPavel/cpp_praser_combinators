@@ -76,3 +76,6 @@ int = do
         op = (do
             char '-'
             return negate) `plus` return id
+
+ints :: Parser [Int]
+ints = brackets (char '[') (int `sepby` char ',') (char ']')
