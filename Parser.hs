@@ -68,3 +68,23 @@ brackets open p close = do
                         x <- p
                         close
                         return x
+
+chainl1 :: Parser a -> Parser (a -> a -> a) -> Parser a
+p `chainl1` op = do
+            x   <- p
+            fys <- many (do
+                            f <- op
+                            y <- p
+                            return (f, y))
+            return $ foldl (\x (f, y) -> f x y) x fys
+
+chainr1 :: Parser a -> Parser (a -> a -> a) -> Parser a
+p `chainr1` op = do
+            x   <- p
+            fys <- many (do
+                            f <- op
+                            y <- p
+                            return (f, y))
+            return $ foldr (\(f, y) x -> f x y) x fys
+
+
