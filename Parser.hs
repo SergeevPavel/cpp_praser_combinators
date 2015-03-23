@@ -31,7 +31,20 @@ bind :: Parser a -> (a -> Parser b) -> Parser b
 Parser p `bind` f = Parser (\inp -> concat [apply (f v) inp' | (v, inp') <- p inp])
 
 sat :: (Char -> Bool) -> Parser Char
-sat p = item `bind` \x -> if p x then result x else zero
+sat p = do
+    x <- item
+    if p x then return x else zero
 
 plus :: Parser a -> Parser a -> Parser a
 Parser p `plus`  Parser q = Parser (\inp -> (p inp ++ q inp))
+
+many :: Parser a -> Parser [a]
+many p = (do
+    x  <- p
+    xs <- many p
+    return (x:xs)) `plus` return []
+
+many1 p = (do
+    x  <- p
+    xs <- many p
+    return (x:xs))

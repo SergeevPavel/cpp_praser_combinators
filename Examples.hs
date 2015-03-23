@@ -36,8 +36,14 @@ letter :: Parser Char
 letter = lower `plus` upper
 
 word :: Parser String
-word = neWord `plus` result ""
-        where 
-            neWord = letter `bind` \x  ->
-                     word   `bind` \xs ->
-                     result (x:xs)
+word = (do
+    x  <- letter
+    xs <- word
+    return (x:xs)) `plus` return ""
+
+string :: String -> Parser String
+string "" = do return ""
+string (x:xs) = do
+    char x
+    string xs
+    return (x:xs)
