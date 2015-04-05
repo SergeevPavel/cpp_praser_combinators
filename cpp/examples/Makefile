@@ -6,7 +6,7 @@ all: examples
 examples: examples.o
 	$(CC) examples.o -o examples
 
-examples.o: examples.cpp
+examples.o: examples.cpp ../parser.h
 	$(CC) $(CFLAGS) -c examples.cpp -o examples.o
 
 .PHONY: clean
