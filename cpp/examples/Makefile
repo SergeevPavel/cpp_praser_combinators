@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-std=c++11 -Wall -Werror -I ../
+CFLAGS=-std=c++11 -Wall -Werror -g -I ../
 
 all: examples
 

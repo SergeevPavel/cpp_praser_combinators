@@ -10,16 +10,16 @@ class Parser
 {
 public:
 
-    using parser_output_t = std::vector< std::pair<A, std::string> >; // возвращается вектор, что довольно плохо
-    using parser_input_t = std::string;
-    using parser_t = std::function< parser_output_t(parser_input_t) >;
+    using output_t = std::vector< std::pair<A, std::string> >; // возвращается вектор, что довольно плохо
+    using input_t = std::string;
+    using parser_t = std::function< output_t(input_t) >;
 
     Parser(parser_t const& parser_)
         : parser(parser_)
     {
     }
 
-    parser_output_t apply(parser_input_t input)
+    output_t apply(input_t input) const
     {
         return parser(input);
     }
