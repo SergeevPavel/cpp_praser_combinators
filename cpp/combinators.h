@@ -40,7 +40,7 @@ Parser<char> item()
 }
 
 template <class A, class B>
-Parser<B> bind(Parser<A> p, std::function< Parser<B>(A) > f)
+Parser<B> bind(const Parser<A> p, const std::function< Parser<B>(A) > f)
 {
     return Parser<B>([p, f](typename Parser<B>::input_t input){
        typename Parser<B>::output_t output;
@@ -53,6 +53,29 @@ Parser<B> bind(Parser<A> p, std::function< Parser<B>(A) > f)
     });
 }
 
+template <class A>
+Parser<A> plus(const Parser<A> p, const Parser<A> q)
+{
+    return Parser<A>([p, q](typename Parser<A>::input_t input){
+        typename Parser<A>::output_t output;
+        const typename Parser<A>::output_t p_chunk = p.apply(input);
+        const typename Parser<A>::output_t q_chunk = q.apply(input);
+        output.insert(output.end(), p_chunk.begin(), p_chunk.end());
+        output.insert(output.end(), q_chunk.begin(), q_chunk.end());
+        return output;
+    });
+}
+
+Parser<char> satisfy(const std::function<bool(char)> p)
+{
+    return bind<char, char>(item(), [p](const char x) {
+        if (p(x))
+        {
+            return result(x);
+        }
+        return zero<char>();
+    });
+}
 
 #endif // COMBINATORS_H
 
