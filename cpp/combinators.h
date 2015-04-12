@@ -90,5 +90,19 @@ Parser< std::vector<A> > many(const Parser<A> p)
     return plus< std::vector<A> >(chunk, result(std::vector<A>()));
 }
 
+template <class A>
+Parser< std::vector<A> > many1(const Parser<A> p)
+{
+    return bind< A, std::vector<A> >(p, [p](const A x){
+    return bind< std::vector<A>, std::vector<A> >(many(p), [x](const std::vector<A> xs){
+           std::vector<A> output(xs);
+           output.insert(output.begin(), x);
+           return result(output);
+        });
+    });
+}
+
+
+
 #endif // COMBINATORS_H
 

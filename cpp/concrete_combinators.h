@@ -26,7 +26,12 @@ Parser<char> upper()
 
 Parser<char> letter()
 {
-    return plus<char>(lower(), upper());
+    return plus(lower(), upper());
+}
+
+Parser<char> alphanum()
+{
+    return plus(letter(), digit());
 }
 
 Parser<std::string> word()
@@ -36,7 +41,7 @@ Parser<std::string> word()
                                 return result(x + xs);
         });
     });
-    return plus<std::string>(neWord, result<std::string>(""));
+    return plus(neWord, result<std::string>(""));
 }
 
 Parser<std::string> string(const std::string pattern)
@@ -57,6 +62,27 @@ Parser<std::string> string(const std::string pattern)
     }
 }
 
+Parser<int> nat()
+{
+    return bind<std::vector<char>, int>(many1(digit()), [](const std::vector<char> xs){
+        int acc = 0;
+        for (char c : xs)
+        {
+            acc = acc * 10 + c - '0';
+        }
+        return result(acc);
+    });
+}
+
+Parser<int> integer()
+{
+    const Parser<int> neg = bind<char, int>(symbol('-'), [](const char _){
+                     return bind<int, int>(nat(), [](const int x){
+                     return result(-x);
+        });
+    });
+    return plus(neg, nat());
+}
 
 #endif // CONCRETE_COMBINATORS
 

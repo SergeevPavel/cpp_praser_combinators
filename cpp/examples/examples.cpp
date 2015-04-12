@@ -103,9 +103,34 @@ void string_test()
 
 void many_test()
 {
-    std::cout << "string test:" << std::endl;
+    std::cout << "many test:" << std::endl;
     std::cout << many(digit()).apply("abcd") << std::endl;
     std::cout << many(digit()).apply("1234dasd") << std::endl;
+    std::cout << "----------------" << std::endl;
+}
+
+void many1_test()
+{
+    std::cout << "many1 test:" << std::endl;
+    std::cout << many1(digit()).apply("abcd") << std::endl;
+    std::cout << many1(digit()).apply("1234dasd") << std::endl;
+    std::cout << "----------------" << std::endl;
+}
+
+void nat_test()
+{
+    std::cout << "nat test:" << std::endl;
+    std::cout << nat().apply("123abc") << std::endl;
+    std::cout << nat().apply("abc") << std::endl;
+    std::cout << "----------------" << std::endl;
+}
+
+void integer_test()
+{
+    std::cout << "integer test:" << std::endl;
+    std::cout << integer().apply("00123abc") << std::endl;
+    std::cout << integer().apply("-123abc") << std::endl;
+    std::cout << integer().apply("abc") << std::endl;
     std::cout << "----------------" << std::endl;
 }
 
@@ -119,5 +144,8 @@ int main()
     word_test();
     string_test();
     many_test();
+    many1_test();
+    nat_test();
+    integer_test();
     return 0;
 }
