@@ -77,5 +77,18 @@ Parser<char> satisfy(const std::function<bool(char)> p)
     });
 }
 
+template <class A>
+Parser< std::vector<A> > many(const Parser<A> p)
+{
+    const Parser<std::vector<A> > chunk = bind< A, std::vector<A> >(p, [p](const A x){
+                                   return bind< std::vector<A>, std::vector<A> >(many(p), [x](const std::vector<A> xs){
+                                   std::vector<A> output(xs);
+                                   output.insert(output.begin(), x);
+                                   return result(output);
+        });
+    });
+    return plus< std::vector<A> >(chunk, result(std::vector<A>()));
+}
+
 #endif // COMBINATORS_H
 

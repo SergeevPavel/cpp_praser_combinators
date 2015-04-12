@@ -3,6 +3,18 @@
 #include "combinators.h"
 #include "concrete_combinators.h"
 
+template <class T>
+std::ostream& operator << (std::ostream& out, std::vector<T> vec)
+{
+    out << "[";
+    for (auto x : vec)
+    {
+        out << x << ",";
+    }
+    out << "]";
+    return out;
+}
+
 template<class A>
 void print(typename Parser<A>::output_t const& result)
 {
@@ -105,6 +117,14 @@ void string_test()
     std::cout << "----------------" << std::endl;
 }
 
+void many_test()
+{
+    std::cout << "string test:" << std::endl;
+    print< std::vector<char> >(many(digit()).apply("abcd"));
+    print< std::vector<char> >(many(digit()).apply("1234dasd"));
+    std::cout << "----------------" << std::endl;
+}
+
 int main()
 {
     result_test();
@@ -114,5 +134,6 @@ int main()
     satisfy_test();
     word_test();
     string_test();
+    many_test();
     return 0;
 }
