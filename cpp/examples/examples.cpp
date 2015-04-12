@@ -97,6 +97,14 @@ void word_test()
     std::cout << "----------------" << std::endl;
 }
 
+void string_test()
+{
+    std::cout << "string test:" << std::endl;
+    print<std::string>(string("abc").apply("abcd"));
+    print<std::string>(string("abc").apply("xabc"));
+    std::cout << "----------------" << std::endl;
+}
+
 int main()
 {
     result_test();
@@ -105,5 +113,6 @@ int main()
     bind_test();
     satisfy_test();
     word_test();
+    string_test();
     return 0;
 }

@@ -31,13 +31,32 @@ Parser<char> letter()
 
 Parser<std::string> word()
 {
-    const Parser<std::string> neWord = bind<char, std::string>(letter(), [](char x){
-                                return bind<std::string, std::string>(word(), [x](std::string xs){
+    const Parser<std::string> neWord = bind<char, std::string>(letter(), [](const char x){
+                                return bind<std::string, std::string>(word(), [x](const std::string xs){
                                 return result(x + xs);
         });
     });
     return plus<std::string>(neWord, result<std::string>(""));
 }
+
+Parser<std::string> string(const std::string pattern)
+{
+    if (pattern.length() == 0)
+    {
+        return result<std::string>("");
+    }
+    else
+    {
+        const char x = pattern[0];
+        const std::string xs = pattern.substr(1, pattern.length() - 1);
+        return bind<char, std::string>(symbol(x), [x, xs](const char _){
+        return bind<std::string, std::string>(string(xs), [x, xs](const std::string _){
+               return result(x + xs);
+            });
+        });
+    }
+}
+
 
 #endif // CONCRETE_COMBINATORS
 
