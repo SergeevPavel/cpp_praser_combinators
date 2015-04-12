@@ -10,7 +10,7 @@ class Parser
 {
 public:
 
-    using output_t = std::vector< std::pair<A, std::string> >; // возвращается вектор, что довольно плохо
+    using output_t = std::vector< std::pair<A, std::string> >;
     using input_t = std::string;
     using parser_t = std::function< output_t(input_t) >;
 
