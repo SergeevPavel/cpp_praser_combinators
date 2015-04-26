@@ -3,6 +3,17 @@
 #include "combinators.h"
 #include "concrete_combinators.h"
 
+
+template <class T>
+std::ostream& operator << (std::ostream& out, const std::vector<T>& vec);
+
+template <class A, class B>
+std::ostream& operator << (std::ostream& out, const std::pair<A, B>& p)
+{
+    out << "(" << p.first << "," << p.second << ")";
+    return out;
+}
+
 template <class T>
 std::ostream& operator << (std::ostream& out, const std::vector<T>& vec)
 {
@@ -15,12 +26,6 @@ std::ostream& operator << (std::ostream& out, const std::vector<T>& vec)
     return out;
 }
 
-template <class A, class B>
-std::ostream& operator << (std::ostream& out, const std::pair<A, B>& p)
-{
-    out << "(" << p.first << "," << p.second << ")";
-    return out;
-}
 
 
 void result_test()
