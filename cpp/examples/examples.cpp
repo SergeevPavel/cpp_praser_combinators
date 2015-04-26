@@ -26,8 +26,6 @@ std::ostream& operator << (std::ostream& out, const std::vector<T>& vec)
     return out;
 }
 
-
-
 void result_test()
 {
     std::cout << "result test:" << std::endl;
@@ -63,13 +61,13 @@ void bind_test()
 
     Parser<std::string> p = bind<char, std::string>(item(), [](char x1){
                      return bind<char, std::string>(item(), [x1](char x2){
-                     return result<std::string>("<" + std::string(&x1) + ">"  + "<" + std::string(&x2) + ">");
+                     return result<std::string>("<" + std::string(1, x1) + ">"  + "<" + std::string(1, x2) + ">");
         });
     });
 
-    auto out = p.apply("hello");
+//    std::string out = ;
 
-    std::cout << out << std::endl;
+    std::cout << p.apply("hello") << std::endl;
 
     std::cout << "----------------" << std::endl;
 }
