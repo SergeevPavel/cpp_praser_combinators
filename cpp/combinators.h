@@ -6,6 +6,33 @@
 #include <string>
 #include <utility>
 
+//#include <boost/type_traits/function_traits.hpp>
+// iserted code
+template <typename T>
+struct function_traits
+    : public function_traits<decltype(&T::operator())>
+{};
+// For generic types, directly use the result of the signature of its 'operator()'
+
+template <typename ClassType, typename ReturnType, typename... Args>
+struct function_traits<ReturnType(ClassType::*)(Args...) const>
+// we specialize for pointers to member function
+{
+    enum { arity = sizeof...(Args) };
+    // arity is the number of arguments.
+
+    typedef ReturnType result_type;
+
+    template <size_t i>
+    struct arg
+    {
+        typedef typename std::tuple_element<i, std::tuple<Args...>>::type type;
+        // the i-th argument is equivalent to the i-th tuple element of a tuple
+        // composed of those arguments.
+    };
+};
+// end of inserted code
+
 #include "parser.h"
 
 template <class A>
@@ -39,9 +66,10 @@ Parser<char> item()
     });
 }
 
-template <class A, class B>
-Parser<B> bind(const Parser<A> p, const std::function< Parser<B>(A) > f)
+template <class A, class function_t>
+auto bind(const Parser<A> p, const function_t f) //-> typename decltype(std::function(f))//function_t::result_type
 {
+    using B = typename function_traits<decltype(f)>::result_type::data_t;
     return Parser<B>([p, f](typename Parser<B>::input_t input){
        typename Parser<B>::output_t output;
        for (auto res : p.apply(input))
@@ -68,7 +96,7 @@ Parser<A> plus(const Parser<A> p, const Parser<A> q)
 
 Parser<char> satisfy(const std::function<bool(char)> p)
 {
-    return bind<char, char>(item(), [p](const char x) {
+    return bind(item(), [p](const char x) {
         if (p(x))
         {
             return result(x);
@@ -80,8 +108,8 @@ Parser<char> satisfy(const std::function<bool(char)> p)
 template <class A>
 Parser< std::vector<A> > many(const Parser<A> p)
 {
-    const Parser<std::vector<A> > chunk = bind< A, std::vector<A> >(p, [p](const A x){
-                                   return bind< std::vector<A>, std::vector<A> >(many(p), [x](const std::vector<A> xs){
+    const Parser<std::vector<A> > chunk = bind(p, [p](const A x){
+                                   return bind(many(p), [x](const std::vector<A> xs){
                                    std::vector<A> output(xs);
                                    output.insert(output.begin(), x);
                                    return result(output);
@@ -93,8 +121,8 @@ Parser< std::vector<A> > many(const Parser<A> p)
 template <class A>
 Parser< std::vector<A> > many1(const Parser<A> p)
 {
-    return bind< A, std::vector<A> >(p, [p](const A x){
-    return bind< std::vector<A>, std::vector<A> >(many(p), [x](const std::vector<A> xs){
+    return bind(p, [p](const A x){
+    return bind(many(p), [x](const std::vector<A> xs){
            std::vector<A> output(xs);
            output.insert(output.begin(), x);
            return result(output);

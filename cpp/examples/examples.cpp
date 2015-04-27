@@ -59,8 +59,8 @@ void bind_test()
 {
     std::cout << "bind test:" << std::endl;
 
-    Parser<std::string> p = bind<char, std::string>(item(), [](char x1){
-                     return bind<char, std::string>(item(), [x1](char x2){
+    Parser<std::string> p = bind(item(), [](char x1){
+                     return bind(item(), [x1](char x2){
                      return result<std::string>("<" + std::string(1, x1) + ">"  + "<" + std::string(1, x2) + ">");
         });
     });

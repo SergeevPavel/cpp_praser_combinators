@@ -36,8 +36,8 @@ Parser<char> alphanum()
 
 Parser<std::string> word()
 {
-    const Parser<std::string> neWord = bind<char, std::string>(letter(), [](const char x){
-                                return bind<std::string, std::string>(word(), [x](const std::string xs){
+    const Parser<std::string> neWord = bind(letter(), [](const char x){
+                                return bind(word(), [x](const std::string xs){
                                 return result(x + xs);
         });
     });
@@ -54,8 +54,8 @@ Parser<std::string> string(const std::string pattern)
     {
         const char x = pattern[0];
         const std::string xs = pattern.substr(1, pattern.length() - 1);
-        return bind<char, std::string>(symbol(x), [x, xs](const char _){
-        return bind<std::string, std::string>(string(xs), [x, xs](const std::string _){
+        return bind(symbol(x), [x, xs](const char _){
+        return bind(string(xs), [x, xs](const std::string _){
                return result(x + xs);
             });
         });
@@ -64,7 +64,7 @@ Parser<std::string> string(const std::string pattern)
 
 Parser<int> nat()
 {
-    return bind<std::vector<char>, int>(many1(digit()), [](const std::vector<char> xs){
+    return bind(many1(digit()), [](const std::vector<char> xs){
         int acc = 0;
         for (char c : xs)
         {
@@ -76,8 +76,8 @@ Parser<int> nat()
 
 Parser<int> integer()
 {
-    const Parser<int> neg = bind<char, int>(symbol('-'), [](const char _){
-                     return bind<int, int>(nat(), [](const int x){
+    const Parser<int> neg = bind(symbol('-'), [](const char _){
+                     return bind(nat(), [](const int x){
                      return result(-x);
         });
     });
