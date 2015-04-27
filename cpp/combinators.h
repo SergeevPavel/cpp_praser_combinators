@@ -41,7 +41,7 @@ Parser<char> item()
 }
 
 template <class A, class function_t>
-auto bind(const Parser<A> p, const function_t f) -> typename function_traits<function_t>::result_type
+auto operator >= (const Parser<A> p, const function_t f) -> typename function_traits<function_t>::result_type
 {
     using B = typename function_traits<function_t>::result_type::data_t;
     return Parser<B>([p, f](typename Parser<B>::input_t input){
@@ -56,7 +56,7 @@ auto bind(const Parser<A> p, const function_t f) -> typename function_traits<fun
 }
 
 template <class A>
-Parser<A> plus(const Parser<A> p, const Parser<A> q)
+Parser<A> operator ||(const Parser<A> p, const Parser<A> q)
 {
     return Parser<A>([p, q](typename Parser<A>::input_t input){
         typename Parser<A>::output_t output;
@@ -68,41 +68,41 @@ Parser<A> plus(const Parser<A> p, const Parser<A> q)
     });
 }
 
-Parser<char> satisfy(const std::function<bool(char)> p)
-{
-    return bind(item(), [p](const char x) {
-        if (p(x))
-        {
-            return result(x);
-        }
-        return zero<char>();
-    });
-}
+//Parser<char> satisfy(const std::function<bool(char)> p)
+//{
+//    return bind(item(), [p](const char x) {
+//        if (p(x))
+//        {
+//            return result(x);
+//        }
+//        return zero<char>();
+//    });
+//}
 
-template <class A>
-Parser< std::vector<A> > many(const Parser<A> p)
-{
-    const Parser<std::vector<A> > chunk = bind(p, [p](const A x){
-                                   return bind(many(p), [x](const std::vector<A> xs){
-                                   std::vector<A> output(xs);
-                                   output.insert(output.begin(), x);
-                                   return result(output);
-        });
-    });
-    return plus< std::vector<A> >(chunk, result(std::vector<A>()));
-}
+//template <class A>
+//Parser< std::vector<A> > many(const Parser<A> p)
+//{
+//    const Parser<std::vector<A> > chunk = bind(p, [p](const A x){
+//                                   return bind(many(p), [x](const std::vector<A> xs){
+//                                   std::vector<A> output(xs);
+//                                   output.insert(output.begin(), x);
+//                                   return result(output);
+//        });
+//    });
+//    return plus< std::vector<A> >(chunk, result(std::vector<A>()));
+//}
 
-template <class A>
-Parser< std::vector<A> > many1(const Parser<A> p)
-{
-    return bind(p, [p](const A x){
-    return bind(many(p), [x](const std::vector<A> xs){
-           std::vector<A> output(xs);
-           output.insert(output.begin(), x);
-           return result(output);
-        });
-    });
-}
+//template <class A>
+//Parser< std::vector<A> > many1(const Parser<A> p)
+//{
+//    return bind(p, [p](const A x){
+//    return bind(many(p), [x](const std::vector<A> xs){
+//           std::vector<A> output(xs);
+//           output.insert(output.begin(), x);
+//           return result(output);
+//        });
+//    });
+//}
 
 
 
