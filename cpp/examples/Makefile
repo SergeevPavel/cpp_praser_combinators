@@ -1,5 +1,5 @@
 CC=clang++
-CFLAGS=-std=c++14 -Wall -Werror -g -I ../
+CFLAGS=-std=c++11 -Wall -Werror -g -I ../
 
 all: examples
 

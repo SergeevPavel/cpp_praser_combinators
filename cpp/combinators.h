@@ -41,7 +41,7 @@ Parser<char> item()
 }
 
 template <class A, class function_t>
-auto bind(const Parser<A> p, const function_t f) //-> typename decltype(std::function(f))//function_t::result_type
+auto bind(const Parser<A> p, const function_t f) -> typename function_traits<decltype(f)>::result_type
 {
     using B = typename function_traits<decltype(f)>::result_type::data_t;
     return Parser<B>([p, f](typename Parser<B>::input_t input){
