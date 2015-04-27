@@ -68,41 +68,36 @@ Parser<A> operator ||(const Parser<A> p, const Parser<A> q)
     });
 }
 
-//Parser<char> satisfy(const std::function<bool(char)> p)
-//{
-//    return bind(item(), [p](const char x) {
-//        if (p(x))
-//        {
-//            return result(x);
-//        }
-//        return zero<char>();
-//    });
-//}
+Parser<char> satisfy(const std::function<bool(char)> p)
+{
+    return item() >= [p](const char x) {
+        if (p(x))
+        {
+            return result(x);
+        }
+        return zero<char>();
+    };
+}
 
-//template <class A>
-//Parser< std::vector<A> > many(const Parser<A> p)
-//{
-//    const Parser<std::vector<A> > chunk = bind(p, [p](const A x){
-//                                   return bind(many(p), [x](const std::vector<A> xs){
-//                                   std::vector<A> output(xs);
-//                                   output.insert(output.begin(), x);
-//                                   return result(output);
-//        });
-//    });
-//    return plus< std::vector<A> >(chunk, result(std::vector<A>()));
-//}
+template <class A>
+Parser< std::vector<A> > many(const Parser<A> p)
+{
+    return  p       >= [p](const A x)
+    {return many(p) >= [x](const std::vector<A> xs){
+            std::vector<A> output(xs);
+            output.insert(output.begin(), x);
+     return result(output);};} || result(std::vector<A>());
+}
 
-//template <class A>
-//Parser< std::vector<A> > many1(const Parser<A> p)
-//{
-//    return bind(p, [p](const A x){
-//    return bind(many(p), [x](const std::vector<A> xs){
-//           std::vector<A> output(xs);
-//           output.insert(output.begin(), x);
-//           return result(output);
-//        });
-//    });
-//}
+template <class A>
+Parser< std::vector<A> > many1(const Parser<A> p)
+{
+    return p       >= [p](const A x){
+    return many(p) >= [x](const std::vector<A> xs){
+           std::vector<A> output(xs);
+           output.insert(output.begin(), x);
+    return result(output);};};
+}
 
 
 
