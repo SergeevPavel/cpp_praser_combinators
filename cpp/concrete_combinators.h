@@ -41,7 +41,7 @@ Parser<std::string> word()
     {return result(x + xs);};} || result<std::string>("");
 }
 
-Parser<std::string> string(const std::string pattern)
+Parser<std::string> string(const std::string& pattern)
 {
     if (pattern.length() == 0)
     {
