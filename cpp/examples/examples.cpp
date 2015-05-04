@@ -17,8 +17,20 @@ std::ostream& operator << (std::ostream& out, const std::pair<A, B>& p)
 template <class T>
 std::ostream& operator << (std::ostream& out, const std::vector<T>& vec)
 {
-    out << "[";
+    out << "{";
     for (auto x : vec)
+    {
+        out << x << ",";
+    }
+    out << "}";
+    return out;
+}
+
+template <class T>
+std::ostream& operator << (std::ostream& out, const std::list<T>& lst)
+{
+    out << "[";
+    for (auto x : lst)
     {
         out << x << ",";
     }
