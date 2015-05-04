@@ -39,8 +39,17 @@ Parser< std::list<A> > sepby1(Parser<A> const& p, Parser<B> const& sep) {
 }
 
 template <class A, class B>
-Parser< std::list<A> > sepby(Parser<A> const p, Parser<B> const& sep) {
+Parser< std::list<A> > sepby(Parser<A> const& p, Parser<B> const& sep) {
     return sepby1(p, sep) || result(std::list<A>());
+}
+
+template <class A, class B, class C>
+Parser<B> between(Parser<A> const& left, Parser<B> const& p, Parser<C> const& right)
+{
+    return left  >= [p, right](A _){
+    return p     >= [right](const B x){
+    return right >= [x](const C _){
+    return result(x);};};};
 }
 
 #endif // COMBINATORS_H

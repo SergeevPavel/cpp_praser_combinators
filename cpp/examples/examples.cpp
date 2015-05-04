@@ -151,6 +151,22 @@ void integer_test()
     std::cout << "----------------" << std::endl;
 }
 
+void sepby_test()
+{
+    std::cout << "sepby test:" << std::endl;
+    std::cout << sepby(integer(), symbol(',')).apply("abcd") << std::endl;
+    std::cout << sepby(integer(), symbol(',')).apply("12,42,64,38 abcd") << std::endl;
+    std::cout << "----------------" << std::endl;
+}
+
+void between_test()
+{
+    std::cout << "between test:" << std::endl;
+    Parser<std::list<int>> ints = between(symbol('['), sepby(integer(), symbol(',')), symbol(']'));
+    std::cout << ints.apply("[-2,34,23,56]") << std::endl;
+    std::cout << "----------------" << std::endl;
+}
+
 int main()
 {
     result_test();
@@ -164,5 +180,7 @@ int main()
     many1_test();
     nat_test();
     integer_test();
+    sepby_test();
+    between_test();
     return 0;
 }
