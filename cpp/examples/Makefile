@@ -1,7 +1,13 @@
 CC=clang++
 CFLAGS=-std=c++11 -Wall -Werror -g -I ../
 
-all: examples
+all: examples expression
+
+expression: expression.o
+	$(CC) expression.o -o expression
+
+expression.o: expression.cpp ../parser.h ../combinators.h ../concrete_combinators.h
+	$(CC) $(CFLAGS) -c expression.cpp -o expression.o
 
 examples: examples.o
 	$(CC) examples.o -o examples
@@ -12,4 +18,4 @@ examples.o: examples.cpp ../parser.h ../combinators.h ../concrete_combinators.h
 .PHONY: clean
 
 clean:
-	rm -f examples *.o
+	rm -f examples expressions *.o

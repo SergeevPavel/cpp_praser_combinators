@@ -1,46 +1,11 @@
 #include <iostream>
 #include <vector>
+#include <list>
 
 #include "combinators.h"
 #include "concrete_combinators.h"
 
-
-template <class T>
-std::ostream& operator << (std::ostream& out, const std::vector<T>& vec);
-
-template <class T>
-std::ostream& operator << (std::ostream& out, const std::list<T>& lst);
-
-template <class A, class B>
-std::ostream& operator << (std::ostream& out, const std::pair<A, B>& p)
-{
-    out << "(" << p.first << "," << p.second << ")";
-    return out;
-}
-
-template <class T>
-std::ostream& operator << (std::ostream& out, const std::vector<T>& vec)
-{
-    out << "{";
-    for (auto x : vec)
-    {
-        out << x << ",";
-    }
-    out << "}";
-    return out;
-}
-
-template <class T>
-std::ostream& operator << (std::ostream& out, const std::list<T>& lst)
-{
-    out << "[";
-    for (auto x : lst)
-    {
-        out << x << ",";
-    }
-    out << "]";
-    return out;
-}
+#include "utils.h"
 
 void result_test()
 {
@@ -167,6 +132,17 @@ void between_test()
     std::cout << "----------------" << std::endl;
 }
 
+void chainl_test()
+{
+    std::cout << "chainl test:" << std::endl;
+    const Parser<std::function<int(int,int)>> plus_op = symbol('+') >= [](const char _){
+        return result(std::function<int(int,int)>([](const int a, const int b){ return a + b;}));
+    };
+
+    std::cout << chainl(integer(), plus_op).apply("22") << std::endl;
+    std::cout << "----------------" << std::endl;
+}
+
 int main()
 {
     result_test();
@@ -182,5 +158,6 @@ int main()
     integer_test();
     sepby_test();
     between_test();
+    chainl_test();
     return 0;
 }
