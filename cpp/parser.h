@@ -1,7 +1,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include <vector>
+#include <list>
 #include <string>
 #include <functional>
 
@@ -9,9 +9,8 @@ template<class A>
 class Parser
 {
 public:
-
     using data_t = A;
-    using output_t = std::vector< std::pair<A, std::string> >;
+    using output_t = std::list< std::pair<A, std::string> >;
     using input_t = std::string;
     using parser_t = std::function< output_t(input_t) >;
 

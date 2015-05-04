@@ -48,22 +48,18 @@ auto operator >= (Parser<A> const& p, const function_t f) -> typename function_t
        typename Parser<B>::output_t output;
        for (auto res : p.apply(input))
        {
-           const typename Parser<B>::output_t chunk = f(res.first).apply(res.second);
-           output.insert(output.end(), chunk.begin(), chunk.end());
+           output.splice(output.end(), f(res.first).apply(res.second));
        }
        return output;
     });
 }
 
 template <class A>
-Parser<A> operator ||(Parser<A> const& p, Parser<A> const& q)
+Parser<A> operator || (Parser<A> const& p, Parser<A> const& q)
 {
     return Parser<A>([p, q](typename Parser<A>::input_t input){
-        typename Parser<A>::output_t output;
-        const typename Parser<A>::output_t p_chunk = p.apply(input);
-        const typename Parser<A>::output_t q_chunk = q.apply(input);
-        output.insert(output.end(), p_chunk.begin(), p_chunk.end());
-        output.insert(output.end(), q_chunk.begin(), q_chunk.end());
+        typename Parser<A>::output_t output = p.apply(input);
+        output.splice(output.end(), q.apply(input));
         return output;
     });
 }
