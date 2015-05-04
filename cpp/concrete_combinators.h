@@ -59,7 +59,7 @@ Parser<std::string> string(const std::string& pattern)
 
 Parser<int> nat()
 {
-    return many1(digit()) >= [](const std::vector<char> xs)
+    return many1(digit()) >= [](const std::list<char> xs)
     {
         int acc = 0;
         for (char c : xs)
