@@ -4,6 +4,7 @@
 #include <list>
 #include <string>
 #include <functional>
+#include <memory>
 
 #include "function_traits.h"
 
@@ -19,7 +20,12 @@ public:
 
     output_t apply(input_t input) const
     {
-        return parser(input);
+        return (*parser_)(input);
+    }
+
+    void copy_context(Parser const& other)
+    {
+        *parser_ = *other.parser_;
     }
 
 private:
@@ -40,14 +46,13 @@ private:
     // simple parsers
     friend Parser<char> item(); // get one char
 
-    friend Parser<char> satisfy(const std::function<bool(char)> p); // get char if it satisfy the predicate
-
-    Parser(parser_t const& parser_)
-        : parser(parser_)
+    Parser(parser_t const& parser)
+        : parser_(std::make_shared<parser_t>(parser))
     {
+
     }
 
-    parser_t parser;
+    std::shared_ptr<parser_t> parser_;
 };
 
 // Monadic operators
@@ -113,7 +118,7 @@ Parser<char> item()
     });
 }
 
-Parser<char> satisfy(const std::function<bool(char)> p)
+Parser<char> satisfy(std::function<bool(char)> const& p)
 {
     return item() >= [p](const char x) {
         if (p(x))

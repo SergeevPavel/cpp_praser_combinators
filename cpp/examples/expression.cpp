@@ -22,11 +22,18 @@ const Parser<std::function<int(int,int)>> mul_op = symbol('*') >= [](const char 
 Parser<int> expr();
 Parser<int> term();
 Parser<int> factor();
-
+Parser<int> lexpr = zero<int>();
 
 Parser<int> expr()
 {
-    return chainl(term(), plus_op || minus_op);
+    static bool check = false;
+    static Parser<int> result = zero<int>();
+    if (!check)
+    {
+        result = chainl(term(), plus_op || minus_op);
+        check = true;
+    }
+    return result;
 }
 
 Parser<int> term()
@@ -36,11 +43,17 @@ Parser<int> term()
 
 Parser<int> factor()
 {
-    return integer() || between(symbol('('), expr(), symbol(')'));
+    return integer() || between(symbol('('), lexpr, symbol(')'));
 }
 
 int main()
 {
-    std::cout << expr().apply("2+2*3") << std::endl;
+    lexpr.copy_context(expr());
+    while (true)
+    {
+        std::string str;
+        std::cin >> str;
+        std::cout << expr().apply(str) << std::endl;
+    }
     return 0;
 }
