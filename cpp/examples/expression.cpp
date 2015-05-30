@@ -46,6 +46,10 @@ Parser<int> factor()
     return integer() || between(symbol('('), lexpr, symbol(')'));
 }
 
+
+// 1) попробовать использовать пойнтеры и ссылки на парсеры
+// 2) писать комбинаторы которые возвращают лямбды
+
 int main()
 {
     lexpr.copy_context(expr());

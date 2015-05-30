@@ -1,6 +1,8 @@
 #ifndef CONCRETE_COMBINATORS
 #define CONCRETE_COMBINATORS
 
+#include <cctype>
+
 #include "parser.h"
 #include "combinators.h"
 
@@ -57,6 +59,11 @@ Parser<std::string> string(const std::string& pattern)
     }
 }
 
+Parser<std::nullptr_t> indentation()
+{
+    return many(satisfy(isspace)) >= [](const std::list<char> _){ return result(nullptr); };
+}
+
 Parser<int> nat()
 {
     return many1(digit()) >= [](const std::list<char> xs)
@@ -75,6 +82,7 @@ Parser<int> integer()
     {return nat() >= [](const int x)
     {return result(-x);};} || nat();
 }
+
 
 #endif // CONCRETE_COMBINATORS
 

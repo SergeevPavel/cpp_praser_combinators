@@ -36,6 +36,9 @@ private:
     template <class T, class function_t>
     friend auto operator >= (Parser<T> const& p, const function_t f) -> typename function_traits<function_t>::result_type; // bind
 
+    template <class T, class U>
+    friend Parser<U> operator > (Parser<T> const& p, Parser<U> const& q);
+
     // alternative
     template <class T>
     friend Parser<T> zero(); // mzero
@@ -74,6 +77,19 @@ auto operator >= (Parser<A> const& p, const function_t f) -> typename function_t
        for (auto res : p.apply(input))
        {
            output.splice(output.end(), f(res.first).apply(res.second));
+       }
+       return output;
+    });
+}
+
+template <class A, class B>
+Parser<B> operator > (Parser<A> const& p, Parser<B> const& q)
+{
+    return Parser<B>([p, q](typename Parser<B>::input_t input){
+       typename Parser<B>::output_t output;
+       for (auto res : p.apply(input))
+       {
+           output.splice(output.end(), q.apply(res.second));
        }
        return output;
     });

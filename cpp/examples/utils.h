@@ -5,6 +5,12 @@
 #include <list>
 #include <utility>
 
+std::ostream& operator << (std::ostream& out, const std::nullptr_t _)
+{
+    out << "()";
+    return out;
+}
+
 template <class T>
 std::ostream& operator << (std::ostream& out, const std::vector<T>& vec);
 
@@ -41,6 +47,9 @@ std::ostream& operator << (std::ostream& out, const std::list<T>& lst)
     out << "]";
     return out;
 }
+
+
+
 
 #endif // UTILS_H
 

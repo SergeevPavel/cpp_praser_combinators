@@ -55,8 +55,9 @@ void satisfy_test()
 {
     std::cout << "satisfy test:" << std::endl;
     auto is_digit = [](const char c){return c >= '0' && c <= '9';};
-    std::cout << satisfy(is_digit).apply("123") << std::endl;
-    std::cout << satisfy(is_digit).apply("a1b") << std::endl;
+    auto p = satisfy(is_digit);
+    std::cout << p.apply("123") << std::endl;
+    std::cout << p.apply("a1b") << std::endl;
 
     std::cout << symbol('z').apply("zzz") << std::endl;
     std::cout << symbol('a').apply("xyz") << std::endl;
@@ -143,21 +144,29 @@ void chainl_test()
     std::cout << "----------------" << std::endl;
 }
 
+void indentation_test()
+{
+    std::cout << "indentation test:" << std::endl;
+    std::cout << (indentation() > integer()).apply("   123") << std::endl;
+    std::cout << "----------------" << std::endl;
+}
+
 int main()
 {
-    result_test();
-    zero_test();
-    item_test();
-    bind_test();
-    satisfy_test();
-    word_test();
-    string_test();
-    many_test();
-    many1_test();
-    nat_test();
-    integer_test();
-    sepby_test();
-    between_test();
-    chainl_test();
+//    result_test();
+//    zero_test();
+//    item_test();
+//    bind_test();
+//    satisfy_test();
+//    word_test();
+//    string_test();
+//    many_test();
+//    many1_test();
+//    nat_test();
+//    integer_test();
+//    sepby_test();
+//    between_test();
+//    chainl_test();
+    indentation_test();
     return 0;
 }
