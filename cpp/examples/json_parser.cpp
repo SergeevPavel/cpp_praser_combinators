@@ -3,6 +3,7 @@
 #include <list>
 #include <vector>
 
+#include "utils.h"
 #include "parser.h"
 #include "combinators.h"
 #include "concrete_combinators.h"
@@ -19,6 +20,7 @@ enum value_kind_t
 
 class value_t;
 using object_t = std::map<std::string, value_t>;
+using key_val_t= std::pair<std::string, value_t>;
 using array_t = std::list<value_t>;
 
 class value_t
@@ -141,22 +143,51 @@ private:
     };
 };
 
-Parser<object_t> object_p()
+Parser<std::string> string_p()
 {
-    return zero<object_t>();
+    return between(symbol('"'), word(), symbol('"'));
 }
 
-Parser<value_t> node_p()
+Parser<value_t> value_p();
+
+Parser<key_val_t> key_val_p()
 {
-    return zero<value_t>();
+    return string_p() >= [](std::string const& key){
+    return indentation() > symbol(':') > indentation() > value_p() >= [key](value_t const& value) {
+    return result(std::make_pair(key, value));
+    };};
+}
+
+Parser<object_t> object_p()
+{
+    return between(indentation() > symbol('{'),
+                   sepby(indentation() > key_val_p(), indentation() > symbol(',')),
+                   indentation() > symbol('}')) >= [](std::list<key_val_t> const& kv)
+    {
+        return result(object_t(kv.begin(), kv.end()));
+    };
 }
 
 Parser<array_t> array_p()
 {
-    return zero<array_t>();
+    return between(indentation() > symbol('['), sepby(value_p(), symbol(',')), indentation() > symbol(']'));
+}
+
+Parser<value_t> value_p()
+{
+    return integer() >= [](int num)
+    {
+        return result(value_t(num));
+    };
 }
 
 int main()
 {
+    while (true)
+    {
+        std::string str;
+        std::getline(std::cin, str);
+        std::cout << object_p().apply(str) << std::endl;
+    }
     return 0;
 }

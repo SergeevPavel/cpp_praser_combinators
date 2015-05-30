@@ -30,7 +30,7 @@ Parser<int> expr()
     static Parser<int> result = zero<int>();
     if (!check)
     {
-        result = chainl(term(), plus_op || minus_op);
+        result = chainl(indentation() > term(), indentation() > (plus_op || minus_op));
         check = true;
     }
     return result;
@@ -38,12 +38,12 @@ Parser<int> expr()
 
 Parser<int> term()
 {
-    return chainl(factor(), mul_op);
+    return chainl(indentation() > factor(), indentation() > mul_op);
 }
 
 Parser<int> factor()
 {
-    return integer() || between(symbol('('), lexpr, symbol(')'));
+    return integer() || between(symbol('('), indentation() > lexpr, indentation() > symbol(')'));
 }
 
 
@@ -56,7 +56,7 @@ int main()
     while (true)
     {
         std::string str;
-        std::cin >> str;
+        std::getline( std::cin, str);
         std::cout << expr().apply(str) << std::endl;
     }
     return 0;

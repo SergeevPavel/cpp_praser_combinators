@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <list>
+#include <map>
 #include <utility>
 
 std::ostream& operator << (std::ostream& out, const std::nullptr_t _)
@@ -48,7 +49,8 @@ std::ostream& operator << (std::ostream& out, const std::list<T>& lst)
     return out;
 }
 
-
+template <class K, class V>
+std::ostream& operator << (std::ostream& out, const std::ma)
 
 
 #endif // UTILS_H
