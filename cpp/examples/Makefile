@@ -24,4 +24,4 @@ examples.o: examples.cpp ../parser.h ../combinators.h ../concrete_combinators.h
 .PHONY: clean
 
 clean:
-	rm -f examples expressions *.o
+	rm -f examples expression json_parser *.o
