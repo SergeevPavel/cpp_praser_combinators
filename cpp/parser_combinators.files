@@ -2,3 +2,7 @@ examples/examples.cpp
 parser.h
 combinators.h
 concrete_combinators.h
+function_traits.h
+examples/expression.cpp
+examples/utils.h
+examples/json_parser.cpp
