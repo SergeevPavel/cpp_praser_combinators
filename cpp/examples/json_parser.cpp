@@ -72,9 +72,9 @@ public:
         return kind_ == Object;
     }
 
-    object_t* getObject() const
+    object_t& getObject() const
     {
-        return static_cast<object_t*>(ptr_);
+        return *static_cast<object_t*>(ptr_);
     }
 
     bool isArray() const
@@ -82,9 +82,9 @@ public:
         return kind_ == Array;
     }
 
-    array_t* getArray() const
+    array_t& getArray() const
     {
-        return static_cast<array_t*>(ptr_);
+        return *static_cast<array_t*>(ptr_);
     }
 
     bool isString() const
@@ -92,9 +92,9 @@ public:
         return kind_ == String;
     }
 
-    std::string* getString() const
+    std::string& getString() const
     {
-        return static_cast<std::string*>(ptr_);
+        return *static_cast<std::string*>(ptr_);
     }
 
     bool isBoolean() const
@@ -119,18 +119,18 @@ public:
 
     ~value_t()
     {
-        if (kind_ == Object)
-        {
-            delete static_cast<object_t*>(ptr_);
-        }
-        else if (kind_ == Array)
-        {
-            delete static_cast<array_t*>(ptr_);
-        }
-        else if (kind_ == String)
-        {
-            delete static_cast<std::string*>(ptr_);
-        }
+//        if (kind_ == Object)
+//        {
+//            delete static_cast<object_t*>(ptr_);
+//        }
+//        else if (kind_ == Array)
+//        {
+//            delete static_cast<array_t*>(ptr_);
+//        }
+//        else if (kind_ == String)
+//        {
+//            delete static_cast<std::string*>(ptr_);
+//        }
     }
 
 private:
@@ -177,12 +177,12 @@ Parser<std::string> string_p()
     return between(symbol('"'), word(), symbol('"'));
 }
 
-Parser<value_t> value_p();
+Parser<value_t> json_p;
 
 Parser<key_val_t> key_val_p()
 {
     return string_p() >= [](std::string const& key){
-    return indentation() > symbol(':') > indentation() > value_p() >= [key](value_t const& value) {
+    return indentation() > symbol(':') > indentation() > json_p >= [key](value_t const& value) {
     return result(std::make_pair(key, value));
     };};
 }
@@ -199,24 +199,34 @@ Parser<object_t> object_p()
 
 Parser<array_t> array_p()
 {
-    return between(indentation() > symbol('['), sepby(value_p(), symbol(',')), indentation() > symbol(']'));
+    return between(indentation() > symbol('['),
+                   sepby(indentation() > json_p, indentation() > symbol(',')),
+                   indentation() > symbol(']'));
+}
+
+Parser<bool> bool_p()
+{
+    return (string("true") > result(true)) || (string("false") > result(false));
 }
 
 Parser<value_t> value_p()
 {
-    return integer() >= [](int num)
-    {
-        return result(value_t(num));
-    };
+    return integer() >= [](int num) { return result(value_t(num));}                  ||
+           bool_p()  >= [](bool boolean) {return result(value_t(boolean)); }         ||
+           string("null") > result(value_t())                                        ||
+           string_p() >= [](std::string const& str) { return result(value_t(str)); } ||
+           object_p() >= [](object_t const& obj) { return result(value_t(obj)); }    ||
+           array_p()  >= [](array_t const& array) { return result(value_t(array)); };
 }
 
 int main()
 {
-    while (true)
+    json_p.set_context(value_p());
+    while (std::cin)
     {
         std::string str;
         std::getline(std::cin, str);
-        std::cout << object_p().apply(str) << std::endl;
+        std::cout << json_p.apply(str) << std::endl;
     }
     return 0;
 }

@@ -7,33 +7,17 @@
 
 #include "utils.h"
 
-const Parser<std::function<int(int,int)>> plus_op = symbol('+') >= [](const char _){
-    return result(std::function<int(int,int)>([](const int a, const int b){ return a + b;}));
-};
+Parser<int> expr_p;
 
-const Parser<std::function<int(int,int)>> minus_op = symbol('-') >= [](const char _){
-    return result(std::function<int(int,int)>([](const int a, const int b){ return a - b; }));
-};
+const Parser<std::function<int(int,int)>> plus_op = symbol('+') > result(std::function<int(int,int)>([](const int a, const int b){ return a + b;}));
 
-const Parser<std::function<int(int,int)>> mul_op = symbol('*') >= [](const char _){
-    return result(std::function<int(int,int)>([](const int a, const int b){ return a * b; }));
-};
+const Parser<std::function<int(int,int)>> minus_op = symbol('-') > result(std::function<int(int,int)>([](const int a, const int b){ return a - b; }));
 
-Parser<int> expr();
-Parser<int> term();
-Parser<int> factor();
-Parser<int> lexpr = zero<int>();
+const Parser<std::function<int(int,int)>> mul_op = symbol('*') > result(std::function<int(int,int)>([](const int a, const int b){ return a * b; }));
 
-Parser<int> expr()
+Parser<int> factor()
 {
-    static bool check = false;
-    static Parser<int> result = zero<int>();
-    if (!check)
-    {
-        result = chainl(indentation() > term(), indentation() > (plus_op || minus_op));
-        check = true;
-    }
-    return result;
+    return integer() || between(symbol('('), indentation() > expr_p, indentation() > symbol(')'));
 }
 
 Parser<int> term()
@@ -41,23 +25,19 @@ Parser<int> term()
     return chainl(indentation() > factor(), indentation() > mul_op);
 }
 
-Parser<int> factor()
+Parser<int> expr()
 {
-    return integer() || between(symbol('('), indentation() > lexpr, indentation() > symbol(')'));
+    return chainl(indentation() > term(), indentation() > (plus_op || minus_op));
 }
-
-
-// 1) попробовать использовать пойнтеры и ссылки на парсеры
-// 2) писать комбинаторы которые возвращают лямбды
 
 int main()
 {
-    lexpr.copy_context(expr());
+    expr_p.set_context(expr());
     while (true)
     {
         std::string str;
         std::getline( std::cin, str);
-        std::cout << expr().apply(str) << std::endl;
+        std::cout << expr_p.apply(str) << std::endl;
     }
     return 0;
 }

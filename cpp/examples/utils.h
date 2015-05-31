@@ -12,6 +12,19 @@ std::ostream& operator << (std::ostream& out, const std::nullptr_t _)
     return out;
 }
 
+//std::ostream& operator << (std::ostream& out, const bool boolean)
+//{
+//    if (boolean)
+//    {
+//        out << "true";
+//    }
+//    else
+//    {
+//        out << "false";
+//    }
+//    return out;
+//}
+
 template <class T>
 std::ostream& operator << (std::ostream& out, const std::vector<T>& vec);
 

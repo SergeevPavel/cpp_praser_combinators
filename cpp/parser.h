@@ -17,13 +17,17 @@ public:
     using input_t = std::string;
     using parser_t = std::function< output_t(input_t) >;
 
+    Parser()
+        : parser_(std::make_shared<parser_t>([](input_t _){return output_t();}))
+    {
+    }
 
     output_t apply(input_t input) const
     {
         return (*parser_)(input);
     }
 
-    void copy_context(Parser const& other)
+    void set_context(Parser const& other)
     {
         *parser_ = *other.parser_;
     }
@@ -54,7 +58,6 @@ private:
     {
 
     }
-
     std::shared_ptr<parser_t> parser_;
 };
 
