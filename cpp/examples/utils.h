@@ -50,7 +50,16 @@ std::ostream& operator << (std::ostream& out, const std::list<T>& lst)
 }
 
 template <class K, class V>
-std::ostream& operator << (std::ostream& out, const std::ma)
+std::ostream& operator << (std::ostream& out, const std::map<K, V>& map)
+{
+    out << "{" << std::endl;
+    for (auto p : map)
+    {
+        out << p.first << " : " << p.second << "," << std::endl;
+    }
+    out << "}";
+    return out;
+}
 
 
 #endif // UTILS_H

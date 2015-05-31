@@ -6,19 +6,19 @@ all: examples expression json_parser
 expression: expression.o
 	$(CC) expression.o -o expression
 
-expression.o: expression.cpp ../parser.h ../combinators.h ../concrete_combinators.h
+expression.o: expression.cpp ../parser.h ../combinators.h ../concrete_combinators.h utils.h
 	$(CC) $(CFLAGS) -c expression.cpp -o expression.o
 
 json_parser: json_parser.o
 	$(CC) json_parser.o -o json_parser
 
-json_parser.o: json_parser.cpp ../parser.h ../combinators.h ../concrete_combinators.h
+json_parser.o: json_parser.cpp ../parser.h ../combinators.h ../concrete_combinators.h utils.h
 	$(CC) $(CFLAGS) -c json_parser.cpp -o json_parser.o
 
 examples: examples.o
 	$(CC) examples.o -o examples
 
-examples.o: examples.cpp ../parser.h ../combinators.h ../concrete_combinators.h
+examples.o: examples.cpp ../parser.h ../combinators.h ../concrete_combinators.h utils.h
 	$(CC) $(CFLAGS) -c examples.cpp -o examples.o
 
 .PHONY: clean

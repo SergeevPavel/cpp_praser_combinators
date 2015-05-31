@@ -62,57 +62,57 @@ public:
         boolean_ = boolean;
     }
 
-    bool isNull()
+    bool isNull() const
     {
         return kind_ == Null;
     }
 
-    bool isObject()
+    bool isObject() const
     {
         return kind_ == Object;
     }
 
-    object_t* getObject()
+    object_t* getObject() const
     {
         return static_cast<object_t*>(ptr_);
     }
 
-    bool isArray()
+    bool isArray() const
     {
         return kind_ == Array;
     }
 
-    array_t* getArray()
+    array_t* getArray() const
     {
         return static_cast<array_t*>(ptr_);
     }
 
-    bool isString()
+    bool isString() const
     {
         return kind_ == String;
     }
 
-    std::string* getString()
+    std::string* getString() const
     {
         return static_cast<std::string*>(ptr_);
     }
 
-    bool isBoolean()
+    bool isBoolean() const
     {
         return kind_ == Boolean;
     }
 
-    bool getBoolean()
+    bool getBoolean() const
     {
         return boolean_;
     }
 
-    bool isNumber()
+    bool isNumber() const
     {
         return kind_ == Number;
     }
 
-    int getNumber()
+    int getNumber() const
     {
         return number_;
     }
@@ -142,6 +142,35 @@ private:
         bool boolean_;
     };
 };
+
+std::ostream& operator << (std::ostream& out, value_t const& value)
+{
+    if (value.isArray())
+    {
+        out << value.getArray();
+    }
+    else if (value.isBoolean())
+    {
+        out << value.getBoolean();
+    }
+    else if (value.isNull())
+    {
+        out << "null";
+    }
+    else if (value.isNumber())
+    {
+        out << value.getNumber();
+    }
+    else if (value.isObject())
+    {
+        out << value.getObject();
+    }
+    else if (value.isString())
+    {
+        out << "\"" << value.getString() << "\"";
+    }
+    return out;
+}
 
 Parser<std::string> string_p()
 {
